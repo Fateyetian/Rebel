@@ -8,6 +8,10 @@
 </div>
 
 <p align="center">
+  📄 <a href="https://arxiv.org/abs/2605.20061" target="_blank">Paper</a> • 💻 <a href="https://github.com/your-org/ReBel" target="_blank">Code</a><br>
+</p>
+
+<p align="center">
   <i>"Long-horizon decision making is not won by faster actions, but by truer beliefs — credit must flow to what the agent <b>knows</b>, not merely to what it <b>does</b>."</i>
 </p>
 
@@ -202,5 +206,11 @@ For questions and discussions, please open an issue or contact the authors via t
 ## 📚 Citation
 
 ```bibtex
-
+@article{tang2026rebel,
+  title   = {Rewarding Beliefs, Not Actions: Consistency-Guided Credit Assignment for Long-Horizon Agents},
+  author  = {Wenjie Tang and Minne Li and Shijia Huang and others},
+  journal = {arXiv preprint arXiv:2605.20061},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2605.20061}
+}
 ```
