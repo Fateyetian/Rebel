@@ -114,7 +114,7 @@
 
   /* ── Stat Grid ────────────────────────────────────────────── */
   .stat-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.25rem; margin-top: 2rem;
   }
   .stat-card {
@@ -123,10 +123,10 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
   }
   .stat-card:hover { transform: translateY(-3px); }
-  .stat-number { font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800; color: #0071e3; line-height: 1; letter-spacing: -0.03em; }
+  .stat-number { font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800; color: #0071e3; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
   .stat-number.green { color: #00a86b; }
   .stat-number.gold  { color: #c29200; }
-  .stat-label  { font-size: 0.84rem; color: #86868b; margin-top: 0.45rem; line-height: 1.4; }
+  .stat-label  { font-size: 0.84rem; color: #86868b; margin-top: 0.45rem; line-height: 1.4; white-space: nowrap; }
 
   /* ── Insight Box ──────────────────────────────────────────── */
   .insight-box {
