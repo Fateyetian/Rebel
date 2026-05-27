@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReBel — Rewarding Beliefs, Not Actions</title>
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 4rem; }
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: #1d1d1f; background: #f5f5f7; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  /* ── Nav ──────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(245,245,247,0.8); backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex; justify-content: center; gap: 2.5rem; padding: 0.85rem;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: -0.01em;
+  }
+  nav a { color: #86868b; transition: color 0.2s; }
+  nav a:hover { color: #1d1d1f; }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .hero {
+    padding: 6rem 2rem 5rem; text-align: center;
+    background: #0d0d0d; color: #f5f5f7; position: relative; overflow: hidden;
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  }
+  /* Dot-matrix texture */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 70%);
+  }
+  /* Three glowing orbs - stronger */
+  .hero::after {
+    content: '';
+    position: absolute; top: -20%; left: 10%; width: 80%; height: 140%;
+    background:
+      radial-gradient(circle at 45% 45%, rgba(0,176,240,0.18) 0%, transparent 45%),
+      radial-gradient(circle at 30% 65%, rgba(0,176,80,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 65% 35%, rgba(250,196,34,0.08) 0%, transparent 40%);
+    animation: heroGlow 12s ease-in-out infinite alternate;
+  }
+  @keyframes heroGlow {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    100% { transform: translate(2%, -3%) scale(1.12); opacity: 1; }
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  .hero h1 {
+    font-size: clamp(4.5rem, 10vw, 8rem); font-weight: 900; line-height: 0.92;
+    letter-spacing: -0.045em; margin-bottom: 0.8rem;
+  }
+  .hero h1 .re { color: #00b0f0; } .hero h1 .be { color: #fac422; } .hero h1 .el { color: #00b050; }
+
+  .hero .subtitle {
+    font-size: clamp(1rem, 2vw, 1.35rem); font-weight: 500;
+    color: #6e6e73; margin-bottom: 2.5rem; letter-spacing: 0.06em;
+  }
+
+  .hero .tagline {
+    max-width: 700px; margin: 0 auto 3rem;
+  }
+  .hero .tagline p {
+    font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+    color: #a1a1a6; line-height: 1.5; letter-spacing: -0.015em;
+  }
+  .hero .tagline p b { color: #f5f5f7; font-weight: 700; }
+  .hero .tagline p em { color: #fac422; font-style: normal; font-weight: 700; }
+  .hero .tagline .punch {
+    font-size: clamp(1.3rem, 2.8vw, 1.7rem); font-weight: 700;
+    color: #f5f5f7; margin-top: 0.6rem; letter-spacing: -0.02em;
+  }
+
+  .hero-links { display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
+  .btn-primary, .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.65rem 1.6rem; border-radius: 980px;
+    font-weight: 500; font-size: 0.9rem; letter-spacing: -0.01em;
+    transition: all 0.2s;
+  }
+  .btn-primary   { background: #0071e3; color: #fff; }
+  .btn-primary:hover   { background: #0077ed; transform: scale(1.03); }
+  .btn-secondary { background: rgba(255,255,255,0.06); color: #f5f5f7; border: 1px solid rgba(255,255,255,0.1); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: scale(1.03); }
+
+  /* ── Sections ─────────────────────────────────────────────── */
+  section { padding: 5rem 2rem; }
+  section.alt { background: #fff; }
+  .container  { max-width: 960px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #0071e3; font-weight: 700; margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-size: clamp(1.55rem, 2.8vw, 2.1rem); font-weight: 700; margin-bottom: 0.8rem;
+    line-height: 1.2; letter-spacing: -0.02em;
+  }
+  .section-sub {
+    font-size: 1rem; color: #86868b; max-width: 660px; line-height: 1.6;
+  }
+
+  /* ── Stat Grid ────────────────────────────────────────────── */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1.25rem; margin-top: 2rem;
+  }
+  .stat-card {
+    background: #fff; border-radius: 16px; padding: 2rem 1.4rem;
+    text-align: center; transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+  }
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-number { font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800; color: #0071e3; line-height: 1; letter-spacing: -0.03em; }
+  .stat-number.green { color: #00a86b; }
+  .stat-number.gold  { color: #c29200; }
+  .stat-label  { font-size: 0.84rem; color: #86868b; margin-top: 0.45rem; line-height: 1.4; }
+
+  /* ── Insight Box ──────────────────────────────────────────── */
+  .insight-box {
+    background: #fff; border-radius: 18px; padding: 3rem 2.5rem; margin-top: 2rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 6px 20px rgba(0,0,0,0.04);
+  }
+  .insight-box::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: linear-gradient(180deg, #0071e3, #00a86b); border-radius: 3px 0 0 3px;
+  }
+  .insight-box h3 { font-size: 1.25rem; margin-bottom: 0.7rem; color: #1d1d1f; font-weight: 700; letter-spacing: -0.015em; }
+  .insight-box p  { color: #86868b; font-size: 0.98rem; line-height: 1.7; }
+  .insight-box p b { color: #1d1d1f; }
+
+  .pipeline {
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    margin-top: 2rem; flex-wrap: wrap; font-size: 0.9rem; font-weight: 600;
+  }
+  .pipeline .step {
+    border-radius: 10px; padding: 0.7rem 1.2rem;
+    border: 1px solid #e8e8ed; font-size: 0.88rem; letter-spacing: -0.01em;
+  }
+  .pipeline .step.b  { border-color: rgba(0,113,227,0.25); color: #0071e3; background: rgba(0,113,227,0.04); }
+  .pipeline .step.t  { border-color: rgba(194,146,0,0.25); color: #9a7500; background: rgba(194,146,0,0.04); }
+  .pipeline .step.a  { border-color: rgba(0,168,107,0.25); color: #00a86b; background: rgba(0,168,107,0.04); }
+  .pipeline .arrow  { color: #d2d2d7; font-size: 1.1rem; font-weight: 400; }
+
+  /* ── Card Grid ────────────────────────────────────────────── */
+  .card-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;
+  }
+  @media (max-width: 768px) { .card-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #fff; border-radius: 14px; padding: 1.8rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.06); }
+  .card.red  { border-left: 3px solid #e05050; }
+  .card.blue { border-left: 3px solid #0071e3; }
+  .card h4 { font-size: 0.95rem; margin-bottom: 0.5rem; font-weight: 700; letter-spacing: -0.015em; }
+  .card p  { color: #86868b; font-size: 0.9rem; line-height: 1.6; }
+
+  /* ── Method Grid ──────────────────────────────────────────── */
+  .method-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; margin-top: 2rem;
+  }
+  .method-card {
+    background: #fff; border-radius: 14px; padding: 2rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    border-top: 3px solid #0071e3;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .method-card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.06); }
+  .method-card h4  { font-size: 0.95rem; margin-bottom: 0.5rem; font-weight: 700; letter-spacing: -0.015em; }
+  .method-card p   { color: #86868b; font-size: 0.88rem; line-height: 1.6; margin-bottom: 0.5rem; }
+  .method-card ul  { color: #86868b; font-size: 0.85rem; line-height: 1.55; padding-left: 1.1rem; }
+  .method-card ul li { margin-bottom: 0.25rem; }
+  /* ── Highlight Row ────────────────────────────────────────── */
+  .highlight-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem; margin-top: 1.5rem;
+  }
+  .highlight-card {
+    background: #fff; border-radius: 14px; padding: 1.4rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    display: flex; align-items: flex-start; gap: 0.9rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .highlight-card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.06); }
+  .highlight-card .icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.05rem; }
+  .highlight-card h4 { font-size: 0.88rem; margin-bottom: 0.2rem; font-weight: 700; letter-spacing: -0.01em; }
+  .highlight-card p  { color: #86868b; font-size: 0.83rem; line-height: 1.5; }
+
+  /* ── Tables ───────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+  .results-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    font-size: 0.82rem;
+  }
+  .results-table th {
+    background: #1d1d1f; color: #f5f5f7; padding: 0.65rem 0.4rem;
+    text-align: center; font-weight: 600; font-size: 0.74rem; white-space: nowrap;
+  }
+  .results-table td {
+    padding: 0.5rem 0.4rem; text-align: center;
+    border-bottom: 1px solid #f0f0f2; white-space: nowrap;
+  }
+  .results-table .row-rebel { background: #f0f5ff; }
+  .results-table .row-rebel td { font-weight: 600; border-bottom: none; }
+  .results-table .hl { font-weight: 700; color: #0071e3; }
+  .results-table .gr { color: #00a86b; font-weight: 600; }
+  .results-table .divider td { border-bottom: 2px solid #e8e8ed; }
+  .results-table .section-label-row td {
+    font-size: 0.7rem; color: #aeaeb2; font-weight: 600;
+    padding: 0.7rem 0.4rem 0.3rem; border-bottom: 1px solid #f0f0f2; text-align: left;
+  }
+
+  .ablation-table {
+    width: 100%; border-collapse: collapse; margin-top: 1.5rem;
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+  }
+  .ablation-table th {
+    background: #1d1d1f; color: #f5f5f7; padding: 0.65rem 0.8rem;
+    text-align: center; font-weight: 600; font-size: 0.76rem;
+  }
+  .ablation-table td {
+    padding: 0.55rem 0.8rem; text-align: center; font-size: 0.84rem;
+    border-bottom: 1px solid #f0f0f2;
+  }
+  .ablation-table .row-final { background: #f0f5ff; }
+  .ablation-table .row-final td { font-weight: 700; }
+  .ablation-table .icon-yes { color: #00a86b; font-weight: 700; }
+  .ablation-table .icon-no  { color: #d2d2d7; }
+
+  /* ── Figure ───────────────────────────────────────────────── */
+  .figure-wrap {
+    background: #fff; border-radius: 14px; padding: 1.4rem; margin-top: 1.8rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+  }
+  .figure-wrap img { border-radius: 8px; width: 100%; }
+  .figure-wrap .caption {
+    text-align: center; font-size: 0.8rem; color: #aeaeb2; margin-top: 0.7rem; line-height: 1.5;
+  }
+
+  /* ── World Model Cards ────────────────────────────────────── */
+  .wm-card {
+    background: #fff; border-radius: 14px; padding: 1.8rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    text-align: left;
+  }
+  .wm-card h4 { color: #0071e3; font-size: 0.98rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+  .wm-card p  { color: #86868b; font-size: 0.88rem; line-height: 1.6; }
+
+  /* ── Quote ─────────────────────────────────────────────────── */
+  .quote-block {
+    text-align: center; padding: 5rem 2rem;
+    background: linear-gradient(180deg, #f5f5f7 0%, #fff 15%, #fff 85%, #f5f5f7 100%);
+    position: relative;
+  }
+  .quote-block::before {
+    content: '\201C';
+    display: block; font-size: 6rem; font-weight: 900; line-height: 0.5;
+    color: #0071e3; opacity: 0.12; margin-bottom: -0.5rem;
+  }
+  .quote-block blockquote {
+    font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+    font-style: italic; max-width: 660px; margin: 0 auto;
+    color: #1d1d1f; line-height: 1.5; letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+  .quote-block .attribution { margin-top: 0.8rem; font-size: 0.85rem; color: #aeaeb2; }
+
+  /* ── Footer ───────────────────────────────────────────────── */
+  footer {
+    text-align: center; padding: 2.5rem 2rem; font-size: 0.78rem; color: #aeaeb2;
+    background: #f5f5f7; border-top: 1px solid #e8e8ed;
+  }
+  footer a { color: #0071e3; font-weight: 500; }
+  footer .bibtex {
+    max-width: 640px; margin: 1.2rem auto 0; padding: 1rem;
+    background: #fff; border-radius: 8px; text-align: left;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 0.72rem;
+    color: #86868b; white-space: pre-wrap; word-break: break-all; overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════════════════ -->
+<nav>
+  <a href="#insight">Insight</a>
+  <a href="#method">Method</a>
+  <a href="#results">Results</a>
+  <a href="#worldmodel">World Model</a>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════ -->
+<header class="hero">
+  <h1><span class="re">Re</span><span class="be">B</span><span class="el">el</span></h1>
+  <p class="subtitle">REWARDING BELIEFS, NOT ACTIONS</p>
+
+  <div class="tagline">
+    <p>The agent's <b>world model</b> should not be a black box.</p>
+    <p>Make it <em>explicit</em>. <em>Structured</em>. <em>Verifiable</em>.</p>
+    <p class="punch">Credit what the agent knows, not what it does.</p>
+  </div>
+
+  <div class="hero-links">
+    <a class="btn-primary"   href="https://arxiv.org/abs/2605.20061" target="_blank">Read the Paper</a>
+    <a class="btn-secondary" href="https://github.com/Fateyetian/Rebel.git" target="_blank">View on GitHub</a>
+  </div>
+</header>
+
+<!-- ═══ STATS ═════════════════════════════════════════════════ -->
+<section class="alt">
+  <div class="container">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number">93.2%</div>
+        <div class="stat-label">ALFWorld Success Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number green">+20.4 pp</div>
+        <div class="stat-label">Gain over GRPO</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number gold">2.1&times;</div>
+        <div class="stat-label">Sample Efficiency</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3.2&times;</div>
+        <div class="stat-label">Shorter Episodes<br>(29.9 &rarr; 9.2 steps)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CORE INSIGHT ══════════════════════════════════════════ -->
+<section id="insight" style="padding-top: 3rem;">
+  <div class="container">
+
+    <div class="insight-box">
+      <h3>The World Model Hypothesis</h3>
+      <p>
+        Every capable agent maintains a <b>world model</b> — a compressed, structured
+        representation of the environment used to reason, anticipate, and plan. Standard
+        LLM agents bury this model inside opaque hidden states where it is invisible
+        to credit assignment and free to drift without consequence. <b>ReBel externalizes
+        the world model as a structured belief segment</b>, making it a first-class object
+        that can be supervised, verified against observations, and corrected when wrong.
+        This is a minimal but concrete instantiation of the world-model loop.
+      </p>
+
+      <div class="pipeline">
+        <span class="step b">Belief</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step t">Think</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step a">Action</span>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 2rem;">
+      <div class="card red">
+        <h4>The Failure: Belief Drift</h4>
+        <p>
+          In partially observable environments, agents infer latent state from incomplete
+          observations. Small inference errors compound over 30+ steps into <b>belief
+          drift</b> — the agent thinks it holds an apple, but its hands are empty.
+          Delayed terminal rewards can't trace the failure back to the original
+          misinference. Credit assignment collapses.
+        </p>
+      </div>
+      <div class="card blue">
+        <h4>The Fix: Belief as First-Class Variable</h4>
+        <p>
+          ReBel makes belief <b>explicit, structured, and verifiable</b>. At each step,
+          the agent outputs a structured belief (object locations, states, task phase,
+          predictions) alongside its reasoning. This belief is checked against subsequent
+          observations — mismatches produce immediate, dense learning signals.
+        </p>
+      </div>
+    </div>
+
+    <div class="figure-wrap">
+      <img src="../assets/intro.png" alt="Belief drift vs consistent belief tracking">
+      <p class="caption">
+        <b>Belief inconsistency (left)</b> vs. <b>ReBel's consistent belief tracking (right)</b>.
+        When the internal world model drifts, actions become invalid even with confident
+        token probabilities. ReBel eliminates this failure mode.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ METHOD ════════════════════════════════════════════════ -->
+<section id="method" class="alt">
+  <div class="container">
+    <div class="section-label">Method</div>
+    <div class="section-title">Two Mechanisms, One Principle</div>
+    <p class="section-sub">
+      Reward the agent for maintaining an accurate <b>world model</b>, not merely for
+      reaching the goal. ReBel converts sparse terminal rewards into dense process-level
+      signals through two complementary mechanisms.
+    </p>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <h4>Belief-Consistency Reward</h4>
+        <p>
+          A dense, step-wise signal that verifies each predicted predicate against
+          subsequent observations. Three components track object locations &amp; states
+          (r_state), task phase (r_task), and expected observation keywords (r_pred).
+          Unverifiable predicates go into a pending buffer and receive credit
+          retroactively when evidence arrives. Observability masking prevents
+          penalizing the agent for what it cannot yet see.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h4>Belief-Anchor Step Advantage</h4>
+        <p>
+          GRPO variants group rollouts by observation hash, which collapses in POMDPs
+          — most groups become singletons, nullifying step-level advantage. ReBel groups
+          by <b>belief equivalence class</b>: two steps share a group if the agent
+          <em>believes</em> the same predicates at that moment. This yields semantically
+          homogeneous comparison groups even when physical states never repeat.
+        </p>
+        <ul>
+          <li><b>Decouples cognition from action</b> — isolates belief error from action quality</li>
+          <li><b>Resilient under sparse rewards</b> — captures belief-maintenance differences even when all terminal rewards are zero</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="figure-wrap">
+      <img src="../assets/main1.png" alt="ReBel overview">
+      <p class="caption">
+        <b>Overview of ReBel.</b> Structured belief generation &rarr; consistency verification
+        against observations &rarr; belief-anchor grouping for stable step-level advantage.
+        Dense self-supervised signals replace sparse terminal-only feedback.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RESULTS ════════════════════════════════════════════════ -->
+<section id="results">
+  <div class="container">
+    <div class="section-label">Results</div>
+    <div class="section-title">Strongest 1.5B Agent on Both Benchmarks</div>
+    <p class="section-sub">
+      ReBel establishes a new performance frontier on ALFWorld and WebShop.
+      All RL methods use Qwen2.5-1.5B-Instruct; mean &plusmn; std over 3 random seeds.
+    </p>
+
+    <div class="table-wrap">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th rowspan="2">Paradigm</th>
+          <th rowspan="2">Method</th>
+          <th colspan="7">ALFWorld</th>
+          <th colspan="2">WebShop</th>
+        </tr>
+        <tr>
+          <th>Pick</th><th>Look</th><th>Clean</th><th>Heat</th><th>Cool</th><th>Pick2</th><th>Overall</th>
+          <th>Score</th><th>SR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="section-label-row"><td colspan="13">Closed-source Frontier Models (zero-shot)</td></tr>
+        <tr><td>Prompt</td><td>GPT-4o</td><td>75.3</td><td>60.8</td><td>31.2</td><td>56.7</td><td>21.6</td><td>49.8</td><td>48.0</td><td>31.8</td><td>23.7</td></tr>
+        <tr class="divider"><td>Prompt</td><td>Gemini-2.5-Pro</td><td>92.8</td><td>63.3</td><td>62.1</td><td>69.0</td><td>26.6</td><td>58.7</td><td>60.3</td><td>42.5</td><td>35.9</td></tr>
+
+        <tr class="section-label-row"><td colspan="13">Prompt-based Agents (Qwen2.5-1.5B-Instruct)</td></tr>
+        <tr><td>Prompt</td><td>Qwen2.5</td><td>5.9</td><td>5.5</td><td>3.3</td><td>9.7</td><td>4.2</td><td>0.0</td><td>4.1</td><td>23.1</td><td>5.2</td></tr>
+        <tr><td>Prompt</td><td>ReAct</td><td>17.4</td><td>20.5</td><td>15.7</td><td>6.2</td><td>7.7</td><td>2.0</td><td>12.8</td><td>40.1</td><td>11.3</td></tr>
+        <tr class="divider"><td>Prompt</td><td>Reflexion</td><td>35.3</td><td>22.2</td><td>21.7</td><td>13.6</td><td>19.4</td><td>3.7</td><td>21.8</td><td>55.8</td><td>21.9</td></tr>
+
+        <tr class="section-label-row"><td colspan="13">RL-trained Agents (Qwen2.5-1.5B-Instruct, 3 seeds)</td></tr>
+        <tr><td>RL</td><td>PPO</td><td>64.8</td><td>40.5</td><td>57.1</td><td>60.6</td><td>46.4</td><td>47.4</td><td>54.4</td><td>73.8</td><td>51.5</td></tr>
+        <tr><td>RL</td><td>RLOO</td><td>88.3</td><td>52.8</td><td>71.0</td><td>62.8</td><td>66.4</td><td>56.9</td><td>69.7</td><td>73.9</td><td>52.1</td></tr>
+        <tr><td>RL</td><td>GRPO</td><td>85.3</td><td>53.7</td><td>84.5</td><td>78.2</td><td>59.7</td><td>53.5</td><td>72.8</td><td>75.8</td><td>56.8</td></tr>
+        <tr><td>RL</td><td>GiGPO w/std</td><td>94.4</td><td>67.5</td><td><b>94.8</b></td><td>94.4</td><td>79.8</td><td>76.4</td><td>86.7</td><td>83.1</td><td>65.0</td></tr>
+        <tr class="divider"><td>RL</td><td>GiGPO w/o std</td><td><b>96.0</b></td><td>76.5</td><td>91.8</td><td>91.3</td><td>71.7</td><td>79.5</td><td>86.1</td><td><b>83.5</b></td><td>67.4</td></tr>
+
+        <tr class="row-rebel">
+          <td>RL</td><td><b>ReBel (Ours)</b></td>
+          <td>91.8</td><td><b>84.2</b></td><td>91.3</td><td><b>95.8</b></td><td><b>84.8</b></td><td><b>96.5</b></td><td class="hl">93.2</td><td>79.8</td><td class="hl">75.1</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="highlight-row">
+      <div class="highlight-card">
+        <div class="icon">&#x1F3AF;</div>
+        <div>
+          <h4>Hardest Task: Pick2</h4>
+          <p><b>96.5%</b> — +36.2 pp over Gemini-2.5-Pro, +17.0 pp over best GiGPO.</p>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x26A1;</div>
+        <div>
+          <h4>2.1&times; Faster Convergence</h4>
+          <p>Matches GRPO's final SR at iteration 35 (vs. 100), without dense human annotations.</p>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F4C9;</div>
+        <div>
+          <h4>3.2&times; Shorter Trajectories</h4>
+          <p>Average episode length drops from 29.9 to 9.2 steps — accurate world model &rarr; efficient plans.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="figure-wrap">
+      <img src="../assets/fig_main_wide.png" alt="Training dynamics and per-task performance">
+      <p class="caption">
+        <b>Training dynamics and per-task performance.</b> (a) ReBel reaches GRPO's terminal
+        SR at iteration ~35. (b) Per-task success rates sorted by trajectory length; &Delta; = gain
+        over GRPO. (c) ReBel's advantage <em>grows with task difficulty</em>, confirming
+        belief-tracking value scales with partial-observability depth.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABLATION + GROUPING ════════════════════════════════════ -->
+<section id="ablation" class="alt">
+  <div class="container">
+    <div class="section-label">Analysis</div>
+    <div class="section-title">Ablation &amp; Efficiency</div>
+
+    <div class="table-wrap">
+    <table class="ablation-table">
+      <thead>
+        <tr>
+          <th>Variant</th>
+          <th>Belief Prompt</th>
+          <th>Belief Grouping</th>
+          <th>Step Adv.</th>
+          <th>Belief Reward</th>
+          <th>ALFWorld SR</th>
+          <th>&Delta;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>B0: GRPO</td>
+          <td class="icon-no">&mdash;</td><td class="icon-no">&mdash;</td><td class="icon-no">&mdash;</td><td class="icon-no">&mdash;</td>
+          <td>60.9</td><td>&mdash;</td>
+        </tr>
+        <tr>
+          <td>B1: + Belief Prompt</td>
+          <td class="icon-yes">&#x2713;</td><td class="icon-no">&mdash;</td><td class="icon-no">&mdash;</td><td class="icon-no">&mdash;</td>
+          <td>78.1</td><td class="gr">+17.2</td>
+        </tr>
+        <tr>
+          <td>B2: + Grouping &amp; StepAdv</td>
+          <td class="icon-yes">&#x2713;</td><td class="icon-yes">&#x2713;</td><td class="icon-yes">&#x2713;</td><td class="icon-no">&mdash;</td>
+          <td>93.0</td><td class="gr">+14.9</td>
+        </tr>
+        <tr class="row-final">
+          <td><b>B3: ReBel (full)</b></td>
+          <td class="icon-yes">&#x2713;</td><td class="icon-yes">&#x2713;</td><td class="icon-yes">&#x2713;</td><td class="icon-yes">&#x2713;</td>
+          <td><b>96.9</b></td><td class="gr">+3.9</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="card-grid" style="margin-top: 1.5rem;">
+      <div class="card blue">
+        <h4>B0 &rarr; B1: Explicit Representation (+17.2)</h4>
+        <p>
+          Making latent state tracking explicit already provides a large gain. But B1
+          still relies on high-variance trajectory-level rewards — insufficient for long horizons.
+        </p>
+      </div>
+      <div class="card blue">
+        <h4>B1 &rarr; B2: Belief-Based Grouping (+14.9)</h4>
+        <p>
+          The largest single gain. Belief-anchor step advantage provides dense optimization
+          signals that identify critical intermediate subgoals — the mechanism behind the
+          2.1&times; sample efficiency gain.
+        </p>
+      </div>
+    </div>
+    <p style="text-align: center; margin-top: 1rem; color: #aeaeb2; font-size: 0.85rem;">
+      <b>B2 &rarr; B3 (+3.9):</b> Belief-consistency reward (r_cons) anchors the policy to
+      environmental ground truth, preventing correct actions from hallucinated states.
+      All three components are <b>synergistic</b>.
+    </p>
+
+    <div style="margin-top: 3.5rem;">
+      <div class="section-label">Efficiency</div>
+      <div class="section-title" style="font-size: 1.4rem;">Grouping Quality Drives Everything</div>
+    </div>
+
+    <div class="figure-wrap">
+      <img src="../assets/fig_groupeff_wide.png" alt="Grouping quality and efficiency">
+      <p class="caption">
+        <b>Grouping quality &rarr; credit assignment &rarr; efficiency.</b> (a) ReBel maintains low
+        singleton ratios; GiGPO's observation-hash grouping frequently collapses. (b) Average
+        episode length drops 29.9 &rarr; 9.2 steps. (c) ReBel reaches 85% rollout success with
+        1.6&times; fewer environment steps, with smoother convergence and tighter confidence bands.
+      </p>
+    </div>
+
+    <div class="highlight-row">
+      <div class="highlight-card">
+        <div class="icon">&#x1F517;</div>
+        <div>
+          <h4>The Chain: Grouping &rarr; Credit &rarr; Efficiency</h4>
+          <p>Better groups &rarr; more reliable advantages &rarr; shorter execution &rarr; faster convergence. One causal story.</p>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F3D7;&#xFE0F;</div>
+        <div>
+          <h4>Semantic vs. Surface</h4>
+          <p>Observation-hash grouping conflates distinct latent states; belief-equivalence grouping captures what the agent <em>thinks</em> is true, not what it sees.</p>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="icon">&#x1F4CA;</div>
+        <div>
+          <h4>Smoother, Tighter Convergence</h4>
+          <p>ReBel's training is not just faster but more stable — narrower variance reflects the regularizing effect of belief-consistency supervision.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WORLD MODEL ════════════════════════════════════════════ -->
+<section id="worldmodel" style="background: #0d0d0d; color: #f5f5f7; padding: 6rem 2rem;">
+  <div class="container" style="text-align: center;">
+    <div class="section-label">The Bigger Picture</div>
+    <div class="section-title" style="color: #f5f5f7; font-size: clamp(1.6rem, 3vw, 2.4rem);">LLMs as Nascent World Models</div>
+    <p style="color: #86868b; font-size: 1.05rem; max-width: 680px; margin: 0.8rem auto 0; line-height: 1.6;">
+      ReBel is not just a better RL algorithm. It is a concrete architectural argument
+      for how LLM agents should be built — with an <b style="color:#f5f5f7;">explicit,
+      inspectable world model</b> at their core.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3.5rem; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
+      <div>
+        <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; color: #00b0f0; letter-spacing: -0.01em;">A New Credit Assignment Paradigm</div>
+        <p style="color: #a1a1a6; font-size: 0.9rem; line-height: 1.65;">
+          Standard RL treats the value function as a black box. ReBel shows that
+          <b style="color:#f5f5f7;">externalized, verifiable belief</b> can carry
+          the credit signal directly — bypassing the need to reconstruct latent state.
+        </p>
+      </div>
+      <div>
+        <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; color: #00b0f0; letter-spacing: -0.01em;">Toward Predictive World Models</div>
+        <p style="color: #a1a1a6; font-size: 0.9rem; line-height: 1.65;">
+          The belief segment today is a structured snapshot. At scale, this loop could
+          grow into a <b style="color:#f5f5f7;">genuine predictive model</b> —
+          anticipating observations, detecting causal structure, planning over
+          imagined trajectories.
+        </p>
+      </div>
+    </div>
+
+    <div class="pipeline" style="margin-top: 3rem;">
+      <span class="step b" style="background:rgba(0,176,240,0.08);border-color:rgba(0,176,240,0.25);color:#00b0f0;">Belief<br><small style="font-weight:400;opacity:0.5;">World Model</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="step t" style="background:rgba(250,196,34,0.06);border-color:rgba(250,196,34,0.2);color:#fac422;">Think<br><small style="font-weight:400;opacity:0.5;">Reasoning</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="step a" style="background:rgba(0,176,80,0.08);border-color:rgba(0,176,80,0.25);color:#00b050;">Action<br><small style="font-weight:400;opacity:0.5;">Execution</small></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUOTE ═════════════════════════════════════════════════ -->
+<div class="quote-block">
+  <blockquote>
+    Long-horizon decision making is not won by faster actions, but by truer beliefs —
+    credit must flow to what the agent knows, not merely to what it does.
+  </blockquote>
+  <p class="attribution">&mdash; ReBel</p>
+</div>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+  <p>
+    <a href="https://arxiv.org/abs/2605.20061" target="_blank">arXiv: 2605.20061</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/Fateyetian/Rebel.git" target="_blank">GitHub</a>
+    &nbsp;&middot;&nbsp;
+    Built on <a href="https://github.com/volcengine/verl" target="_blank">veRL</a> +
+    <a href="https://github.com/langfengQ/verl-agent" target="_blank">verl-agent</a>
+  </p>
+
+  <p style="margin-top: 1rem;">If you find ReBel useful, please cite:</p>
+  <div class="bibtex">@article{tang2026rebel,
+    title   = {Rewarding Beliefs, Not Actions: Consistency-Guided
+               Credit Assignment for Long-Horizon Agents},
+    author  = {Wenjie Tang and Minne Li and Shijia Huang and others},
+    journal = {arXiv preprint arXiv:2605.20061},
+    year    = {2026},
+  }</div>
+
+  <p style="margin-top: 1.2rem; font-size: 0.75rem;">
+    Licensed under Apache 2.0.
+  </p>
+</footer>
+
+</body>
+</html>
