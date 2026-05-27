@@ -8,7 +8,7 @@
 </div>
 
 <p align="center">
-  📄 <a href="https://arxiv.org/abs/2605.20061" target="_blank">Paper</a> • 💻 <a href="https://github.com/your-org/ReBel" target="_blank">Code</a><br>
+  📄 <a href="https://arxiv.org/abs/2605.20061" target="_blank">Paper</a> • 🌐 <a href="https://fateyetian.github.io/Rebel/" target="_blank">Project Page</a> • 💻 <a href="https://github.com/Fateyetian/Rebel" target="_blank">Code</a><br>
 </p>
 
 <p align="center">
